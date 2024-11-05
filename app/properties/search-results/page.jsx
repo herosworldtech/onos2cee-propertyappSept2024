@@ -1,4 +1,4 @@
-import Link from "next/Link";
+import Link from "next/link";
 import PropertyCard from "@/components/PropertyCard";
 import PropertySearchForm from "@/components/PropertySearchForm";
 import connectDB from "@/config/database";
