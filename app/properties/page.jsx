@@ -1,10 +1,16 @@
 import PropertyCard from "@/components/PropertyCard";
 import connectDB from "@/config/database";
 import Property from "@/models/Property";
+import Pagination from "@/components/Pagination";
 
-const PropertiesPage = async () => {
+const PropertiesPage = async ({ searchParams: { page = 1, pageSize = 2 } }) => {
   await connectDB();
-  const properties = await Property.find({}).lean();
+
+  const skip = (page - 1) * pageSize;
+  const total = await Property.countDocuments({});
+  const properties = await Property.find({}).skip(skip).limit(pageSize);
+
+  const showPagination = total > pageSize;
   return (
     <>
       {/* <!-- Search --> */}
@@ -64,18 +70,15 @@ const PropertiesPage = async () => {
               ))}
             </div>
           )}
-        </div>
-      </section>
 
-      {/* <!-- Pagination --> */}
-      <section className="container mx-auto flex justify-center items-center my-8">
-        <button className="mr-2 px-2 py-1 border border-gray-300 rounded">
-          Previous
-        </button>
-        <span className="mx-2">Page 1 of 10</span>
-        <button className="ml-2 px-2 py-1 border border-gray-300 rounded">
-          Next
-        </button>
+          {showPagination && (
+            <Pagination
+              page={parseInt(page)}
+              pageSize={parseInt(pageSize)}
+              totalItems={total}
+            />
+          )}
+        </div>
       </section>
     </>
   );
